@@ -1,5 +1,6 @@
 ---
 name: ticket-read-along
+disable-model-invocation: true
 description: >
   Walk the user through a ticket, PR, or spec chunk-by-chunk with comprehension checks,
   instead of summarizing it away. Trigger on "walk me through this ticket", "help me

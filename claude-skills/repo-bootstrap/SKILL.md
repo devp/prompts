@@ -1,5 +1,6 @@
 ---
 name: repo-bootstrap
+disable-model-invocation: true
 description: Bootstrap a repo's local dev environment from scratch by actually running commands and verifying each step live, then write the results into a personal recipe store (init/up/down/status + NOTES.md) so the next setup is one command. Use when spinning up a repo you haven't set up before, or re-verifying a recipe that might be stale. Invoke from inside the target repo's own checkout (cwd = that repo).
 ---
 
