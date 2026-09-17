@@ -1,5 +1,6 @@
 ---
 name: notion-skim
+disable-model-invocation: true
 description: >
   Walk a long Notion page section by section at skim pace: for each section, a two-sentence
   gist the user rewords back, plus up to three findings they rule on. Trigger on "skim this
