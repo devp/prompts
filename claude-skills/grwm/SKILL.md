@@ -4,8 +4,9 @@ disable-model-invocation: true
 description: >
   Morning briefing. Pulls work journal + task list + calendar, surfaces one best-impact
   AM move plus today's focuses. Use when user runs /grwm or asks "what should I work on
-  this morning" / "help me plan today". Inputs are all optional — Todoist/Google Calendar
-  MCP if connected, pasted journal/agenda text otherwise, or just ask the user directly.
+  this morning" / "help me plan today". Inputs are all optional — Todoist/Google
+  Calendar/Slack MCP if connected, pasted journal/agenda text otherwise, or just ask the
+  user directly.
 ---
 
 # grwm
@@ -21,8 +22,15 @@ list for today out.
   `find-tasks-by-date` for today/overdue) if connected. Else ask user to paste it.
 - **Calendar** — Google Calendar MCP (`list_events` for today) if connected. Else ask, or
   skip if user says no meetings.
+- **Slack** — Slack MCP if connected. There is no unread/badge API; approximate with two
+  `slack_search_public_and_private` calls scoped `after:<last journal date>`:
+  - asks aimed at the user: `keywords: ["<user's slack handle>"]` — matches the
+    `<@Uxxx|handle>` mention token
+  - DMs and threads in flight: `filters: "with:<@Uxxx> after:YYYY-MM-DD"`
+  Drop bot-digest hits that don't name the user. Read named standup/digest channels only
+  if the user asks for them.
 
-Don't demand all three. If only the journal is pasted, work from that and ask 1-2 quick
+Don't demand all of them. If only the journal is pasted, work from that and ask 1-2 quick
 questions to fill gaps (what's due today, any meetings).
 
 ## Procedure
@@ -31,7 +39,7 @@ questions to fill gaps (what's due today, any meetings).
 2. Cross-reference: overdue/due-today tasks, calendar gaps, journal threads still open.
 3. Pick **one AM-impact move** — high-leverage, fits before meetings eat the day.
    Priority order: overdue > blocking someone else > journal thread already in motion >
-   new task.
+   new task. An unanswered direct Slack ask counts as blocking someone else.
 4. List **2-4 focuses for today** — not a full task dump, just what's realistic given the
    calendar load.
 5. Flag anything time-boxed (meeting prep, EOD deadline) that needs a slot.
@@ -59,6 +67,6 @@ inputs, no "here's what I found" preamble.
 
 ## Guardrails
 
-- Read-only against Todoist/Calendar — never create, update, or complete tasks/events
-  unless explicitly asked.
+- Read-only against Todoist/Calendar/Slack — never create, update, or complete
+  tasks/events, and never send a message, reaction, or draft, unless explicitly asked.
 - Don't invent tasks or events not present in the actual inputs.
