@@ -2,12 +2,8 @@
 
 ## Premise
 
-- the problem is misleading context, not wasted tokens
-   - therefore, delete docs and comments if wrong/doc-rot/bit-rot
-- deletion is recoverable, misleading is risky, rewrite/review is expensive
-   - therefore, bias to delete
-- focus on per-turn context (AGENTS.md, CLAUDE.md)
-- useless tests are useless (and misleading if they ever break)
+See [philosophy.md](philosophy.md) — the 19 opinions this suite embeds, each graded by whether
+it's measured, reported, or just argued. Two are load-bearing and weak; they're named there.
 
 ## Operation
 
