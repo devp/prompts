@@ -25,8 +25,9 @@ should change for this repo before Phase 1. Edit this section to change them per
 
 | # | Directive |
 | --- | --- |
-| D1 | A deletion is blocked by **any** drop in line **or** branch coverage |
-| D2 | No coverage run means no finding. Reading a test and calling it pointless is an opinion, not evidence |
+| D0 | **Coverage is opt-in.** The default path is cheap: three greps and a CI query. Never run an instrumented suite, and never gate a candidate, until the user has seen the candidate list and approved the cost |
+| D1 | When the gate does run, a deletion is blocked by **any** drop in line **or** branch coverage |
+| D2 | No coverage run means no *coverage-gated* finding — that covers change-detector and coverage-duplicated candidates only. Never-runs, flaky, and skipped carry their own evidence and need no instrumented run |
 | D3 | Prefer fixing a flaky test over deleting it. Delete only when the gate shows its coverage is duplicated |
 | D4 | Don't introduce mutation-testing tooling for this sweep. Use it only if the repo already has it |
 | D5 | A candidate that fails the gate is dropped silently. Don't argue it back |
@@ -36,32 +37,35 @@ should change for this repo before Phase 1. Edit this section to change them per
 | D9 | If most tests contribute zero unique lines or arcs, the gate is uninformative for this suite. Say so in Phase 0, drop the coverage-duplicated category, and don't spend a run on it |
 | D10 | **Exit early.** Zero skips, zero xfails, no flake signal, and an uninformative gate means there is nothing this sweep can find. Report Phase 0 and stop before any per-test coverage run |
 | D11 | Budget before running. Per-candidate gating costs one suite run each; per-test coverage contexts cost a full instrumented run. On a monorepo, scope to one package per sweep — never the whole tree |
+| D12 | **The gate evidence ships in the PR body.** Statements and branches measured, before and after, and the skip's tracking-issue status. Without it the reviewer sees an assertion; "no longer needed" is a conclusion, not a reason |
 
-## Phase 0 — baseline
+## Phase 0 — the cheap diagnostic
 
-Report before proposing anything:
+This is the whole skill most of the time. Minutes, no instrumentation, no environment work.
+Four signals:
 
-- total test count, suite wall-clock, slowest 10 tests
-- flake rate if CI history is reachable (`gh run list` / CI API): tests that have gone red then
-  green on an unchanged commit
-- current line and branch coverage — this is the gate's reference point, capture it exactly
-- **is the gate informative here?** Run per-test coverage contexts and count tests contributing
-  zero unique lines and zero unique arcs. A high share means route-test overlap, not
-  redundancy, and the gate would wave most of the suite through. Report the share and apply D9
+- **collected vs on disk** — count test functions in the tree, count what the runner collects.
+  The gap is the highest-value finding here and it costs one command each
+- **skips** — grep `@skip`, `xfail`, `it.skip`, `@Ignore`, and whether each names a live issue
+- **flake history** — `gh run list` / CI API: red then green on an unchanged commit
+- **suite shape** — test count, wall-clock, slowest 10, from a run that was happening anyway
+
+Report these and stop (D10). Do not install a database, do not build an environment (D8), do
+not run coverage. If the four signals are clean, the suite is healthy and there is nothing
+here — that is the normal outcome and it should cost minutes.
+
+**Then offer the expensive path, priced.** Only the change-detector and coverage-duplicated
+categories need it, and both are low-yield:
+
+```
+Cheap findings: 2 skipped tests (no tracking issue), 17 tests never collected.
+Coverage-gated categories would cost ~1 instrumented run + 1 suite run per candidate
+(suite is 108s → est. 25min). Want it?
+```
 
 Measured on one real suite (1,674 tests, 78.9% coverage): 1,179 of 1,585 tests contributed no
-unique coverage. Expect this to be common, not exceptional.
-
-**Then decide whether to continue (D10).** State the four Phase 0 signals and the call:
-
-```
-skips 0 · xfails 0 · flake signal none (790 CI runs) · gate uninformative (74% zero-unique)
-→ nothing findable. Stopping.
-```
-
-A healthy suite is the normal outcome and it is cheap to establish. Getting there costs one
-test run and one CI-history query; going further costs a full instrumented run plus one suite
-run per candidate. Don't spend the second budget to confirm the first.
+unique coverage, so the gate would wave three quarters of the suite through anyway (D9).
+Expect that, and expect the honest answer to be no.
 
 ## Phase 1 — candidates
 
@@ -82,7 +86,9 @@ process — a module blanking `settings.DATABASES`, a global monkeypatch, an `os
 Report it. A suite that can only run in shards hides exactly the problem above.
 
 **Permanently skipped.** `@skip`, `xfail`, `it.skip`, `@Ignore` with no tracking issue or a
-closed one. Not running, not maintained, still read by everyone who greps the file.
+closed one. Not running, not maintained, still read by everyone who greps the file. Cheap to
+find and near-zero value to remove — a skipped test is inert. Report it; only open a PR if
+you're already touching the file or the user asks. It is not worth a run of its own.
 
 **Change-detector.** Asserts on how, not what:
 
