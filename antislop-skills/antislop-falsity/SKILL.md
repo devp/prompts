@@ -29,15 +29,20 @@ should change for this repo before Phase 1. Edit this section to change them per
 | D4 | Never delete on your own judgment in Phase 2. Propose, let the user rule |
 | D5 | Verbose-but-true comments are ride-along only — inside files a finding already opened. Never a standalone sweep |
 | D6 | `README.md` and `CHANGELOG.md` are exempt. Code cannot answer "what is this project" or "what changed in 2.0" |
-| D7 | A comment carrying *why*, provenance, a rejected alternative, or an outside constraint (vendor bug, wire format, legal) is always kept. Code cannot express absence |
+| D7 | A comment carrying *why*, provenance, a rejected alternative, or an outside constraint (vendor bug, wire format, legal) is always kept. Code cannot express absence. **Before deleting any comment, quote it and state which D7 category it fails.** No quote, no deletion |
 | D8 | Never share a PR with test deletions. Different proof regime |
 | D9 | No shell or repo access means Phase 1 cannot run. Say so and stop. Phases 2-3 on pasted files are opinion, not findings — run them only if the user asks knowing that |
+| D10 | Every changed line traces to a numbered finding. No formatting, punctuation, or rewording passes. A file with no finding is not opened |
+| D11 | Writing is allowed but priced by tier: words added to per-turn context spend the budget this sweep exists to cut; the same words in `docs/` are ~free. Report the price |
+| D12 | Headline the metric. Per-turn context size before and after, lines and bytes, is the first and last thing reported |
 
 ## Phase 0 — baseline
 
 Report before touching anything. Numbers, not prose.
 
-- token count of the per-turn context (D1)
+- **per-turn context size, per file and total, in lines and bytes** (D1, D12). This is the
+  number the sweep is judged on. Capture it exactly — you report the delta at the end
+- `wc -lc` on each per-turn file is enough. Don't estimate tokens; bytes are the honest proxy
 - count of files under `docs/` (or equivalent) and their oldest/newest mtime
 - whether the `claude-md-management` plugin is enabled. If yes, run its audit and keep **only**
   its Red Flags section — its score rewards having more content, which is backwards here
@@ -78,7 +83,14 @@ User judgment, on survivors. Propose only (D4). Label each line:
 - **belongs on-demand** — true and useful but only sometimes relevant → move to a doc the
   agent can grep, out of the per-turn context
 
-Moving beats deleting for that third case (D1, D2).
+Moving beats deleting for that third case (D1, D2), but a move is **verbatim relocation**.
+Rewriting content in transit makes it unreviewable — the diff shows a new file and a deletion,
+and nobody can tell which words changed.
+
+**Report a count for all three labels, including zeroes.** A sweep that returns only "belongs
+on-demand" has pulled one lever: it relocated bulk and challenged nothing. The `would happen
+anyway` count is the pass working. If it is zero, say so explicitly and say why — that is a
+finding about the file, not a quiet skip.
 
 ## Phase 3 — semantic falsity
 
@@ -105,6 +117,22 @@ when someone reviews the line.
 Only inside a file a Phase 3 finding already opened (D5). A true, harmless, verbose comment
 costs nothing at read time and deleting it buys nothing.
 
+**The D7 check comes first, and it is the expensive one to get wrong.** A verbose comment and
+an irreplaceable one look alike: both are long, both restate context the code doesn't show.
+Quote the comment, then name the D7 category it fails, before proposing the deletion. These
+are keeps, not candidates:
+
+- names an alternative that was considered and rejected ("it is a table and not a JSON column
+  because…")
+- states a consequence outside this file ("…would flow to customer-sync-service on every
+  submit")
+- marks this code as an exception to a pattern the reader will assume ("implemented, not a 501
+  stub like the rest of this router")
+- carries a ticket ref — inline the why, keep the link, never drop both
+
+Length is not evidence. A long comment explaining a rejected design is the highest-value line
+in the file; deleting it is unrecoverable in a way deleting prose is not.
+
 When you do touch comments in a code file, prove the change is comments-only:
 
 1. tokenize both revisions dropping comments, diff the token streams (Python: `tokenize`;
@@ -119,11 +147,27 @@ skip it and don't hand-wave it as "should pass."
 
 ## Output
 
-Claims, ranked by blast radius. The user rules on the claim, not the diff.
+Lead with the metric (D12), then the claims:
+
+```
+per-turn context:  AGENTS.md  400 → 279 lines,  65.8KB → 52.6KB   (-20%)
+                   added back:  +50 lines to AGENTS.md  (D11: spent budget)
+                   moved out:   175 lines → docs/migration-context.md  (verbatim)
+
+Phase 2 rulings:   would-happen-anyway 0 · earns-its-slot 34 · belongs-on-demand 6
+```
+
+A zero in `would-happen-anyway` next to a large `belongs-on-demand` means the sweep relocated
+bulk without challenging anything. Say that out loud rather than shipping it as a win.
+
+Then the claims, ranked by blast radius. The user rules on the claim, not the diff.
 
 ```
 <file:line>  <what it says>  →  <what's true, cited>  →  delete | fix | move | keep
 ```
+
+Every row in the diff maps to a row here (D10). If a file appears in the diff with no claim
+behind it, drop the file from the change.
 
 Batch by claim, small. If a phase produces nothing, say so and stop — a clean phase is a
 result. Do not pad the report to look productive.

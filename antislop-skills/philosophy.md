@@ -22,16 +22,16 @@
 | 6 | Don't delete on your own judgment in a judgment pass | falsity D4 | argued |
 | 7 | Verbose-but-true comments don't justify a sweep | falsity D5 | argued |
 | 8 | README/CHANGELOG are non-duplicative by construction | falsity D6 | argued (near-definitional) |
-| 9 | Why/provenance/constraint comments are always kept | falsity D7 | argued |
+| 9 | Why/provenance/constraint comments are always kept | falsity D7 | **measured** — violated twice before D7 got teeth |
 | 10 | A ticket is a bad home for provenance | falsity Phase 3 | **measured** |
 | 11 | A stale comment is worse than no comment | falsity Phase 3 | argued |
 | 12 | Comment-only changes are mechanically provable | falsity ride-along | verifiable, not yet run here |
 | 13 | One proof regime per PR | falsity D8, tests D6 | argued |
 | 14 | No shell access means no findings | falsity D9 | argued (follows from 5) |
 | 15 | Flaky tests train people to ignore red | tests Phase 1 | **reported** |
-| 16 | A coverage delta is a valid deletion gate | tests D1, D2 | **measured** mechanism, argued inference — see below |
+| 16 | A coverage delta is a valid deletion gate | tests D1, D2 | **measured as weak** — see below |
 | 17 | Don't add mutation tooling for a cleanup | tests D4 | argued (scope discipline) |
-| 18 | The test sweep needs an exclusive checkout | tests D7 | argued |
+| 18 | The test sweep needs an exclusive checkout and an idle machine | tests D7 | **measured** — contention invalidated a gate run |
 | 19 | The `claude-md-management` rubric is backwards for this purpose | README plugin section | **measured** |
 
 
@@ -47,8 +47,45 @@
 - **#19** — counted from `claude-md-management/1.0.0/skills/claude-md-improver/references/quality-criteria.md`:
   70 of 100 points reward having more content, and "Architecture Clarity" pays 20 for the
   directory-map prose this suite deletes.
-- **#15** is **reported**, not measured — flaky-test desensitization is well documented in
-  industry postmortems and test-infrastructure research. Nothing was measured in your repos.
+
+## What the first runs changed
+
+Three sweeps, two repos. Summary of what moved from argued to measured.
+
+**#4 (per-turn context is the thing to cut) — the sweeps do move it.** amp-service AGENTS.md
+400 → 279 lines, 65.8KB → 52.6KB (−20%). events AGENTS.md 718 → 593 lines, 37.8KB → 32.0KB
+(−15%). Both achieved mainly by relocating bulk to on-demand files, and both partly undone by
+new prose written back into the per-turn tier. The *cut* is measured. Whether it improves
+output is not — nothing here measured behavior, so **#3 stays contested.**
+
+**#16 (coverage as a deletion gate) — the hole is bigger than argued.** On a 1,674-test suite
+at 78.9% coverage, 1,179 of 1,585 tests contributed zero unique lines and zero unique arcs.
+The gate would wave three quarters of the suite through, and the tests it scores at zero
+include the highest-value ones: a 33-case pause-state truth table, a deliberately hardcoded
+digest, closed-enum rejection. Upgrade to **measured — and measured as weak.** It is a permit,
+not a proof, and on suites like this it is not even a permit. Hence tests D9/D10.
+
+**#9 (why/provenance comments are always kept) — violated in practice, twice, in one PR.**
+A ride-along pass deleted a docstring explaining why a table was chosen over a JSON column
+(naming the cross-service consequence), and a comment marking endpoints as implemented rather
+than 501 stubs like the rest of their router. Both are exactly the D7 category. Length reads
+as verbosity; irreplaceable context is often long. The directive needed teeth, not restating —
+hence falsity D7's quote-and-justify requirement.
+
+**#15 (flaky tests) — no local evidence either way.** 790 CI runs on amp-service, zero flake
+signal, and only 11 commits ever run twice. A 1-in-50 flake would leave no trace. Still
+**reported**, not measured here.
+
+**New, unlisted until now: cost is a real constraint.** A tests sweep on a large monorepo ran
+31 minutes and 184k tokens without finishing. Establishing "healthy suite, nothing findable"
+costs one test run and one CI query; proving it costs a full instrumented run plus a suite run
+per candidate. The second budget rarely buys anything the first didn't already indicate.
+
+**Also new: the sweep's best output isn't deletion.** A run surfaced a test class that never
+executes — 17 tests silently uncollected — and a module that blanks `settings.DATABASES` at
+import, forcing the suite to run in shards. Neither is a deletion candidate; both mean the
+suite is lying about what it checks. Tests Phase 1 now ranks "never runs at all" above
+everything else.
 
 ### The two weak links
 
