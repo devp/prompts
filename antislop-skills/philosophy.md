@@ -26,12 +26,12 @@
 | 10 | A ticket is a bad home for provenance | falsity Phase 3 | **measured** |
 | 11 | A stale comment is worse than no comment | falsity Phase 3 | argued |
 | 12 | Comment-only changes are mechanically provable | falsity ride-along | verifiable, not yet run here |
-| 13 | One proof regime per PR | falsity D8, tests D6 | argued |
+| 13 | One proof regime per PR | falsity D8, integrity D6 | argued |
 | 14 | No shell access means no findings | falsity D9 | argued (follows from 5) |
-| 15 | Flaky tests train people to ignore red | tests Phase 1 | **reported** |
-| 16 | A coverage delta is a valid deletion gate | tests D1, D2 | **measured as weak** — see below |
-| 17 | Don't add mutation tooling for a cleanup | tests D4 | argued (scope discipline) |
-| 18 | The test sweep needs an exclusive checkout and an idle machine | tests D7 | **measured** — contention invalidated a gate run |
+| 15 | Flaky tests train people to ignore red | integrity check 4 | **reported** |
+| 16 | A coverage delta is a valid deletion gate | integrity, opt-in path | **measured as weak** — demoted out of the default path |
+| 17 | Don't add mutation tooling for a cleanup | integrity D8 | argued (scope discipline) |
+| 18 | The gate run needs an exclusive checkout and an idle machine | integrity D7 | **measured** — contention invalidated a gate run |
 | 19 | The `claude-md-management` rubric is backwards for this purpose | README plugin section | **measured** |
 
 
@@ -63,7 +63,7 @@ at 78.9% coverage, 1,179 of 1,585 tests contributed zero unique lines and zero u
 The gate would wave three quarters of the suite through, and the tests it scores at zero
 include the highest-value ones: a 33-case pause-state truth table, a deliberately hardcoded
 digest, closed-enum rejection. Upgrade to **measured — and measured as weak.** It is a permit,
-not a proof, and on suites like this it is not even a permit. Hence tests D9/D10.
+not a proof, and on suites like this it is not even a permit. Hence the opt-in demotion.
 
 **#9 (why/provenance comments are always kept) — violated in practice, twice, in one PR.**
 A ride-along pass deleted a docstring explaining why a table was chosen over a JSON column
@@ -84,8 +84,14 @@ per candidate. The second budget rarely buys anything the first didn't already i
 **Also new: the sweep's best output isn't deletion.** A run surfaced a test class that never
 executes — 17 tests silently uncollected — and a module that blanks `settings.DATABASES` at
 import, forcing the suite to run in shards. Neither is a deletion candidate; both mean the
-suite is lying about what it checks. Tests Phase 1 now ranks "never runs at all" above
-everything else.
+suite is lying about what it checks.
+
+**So the test sweep was retired and replaced.** The deletion premise was testable and got
+tested: across two well-maintained repos it yielded 104 lines of inert `it.skip()` blocks, for
+roughly half an hour and 184k tokens. The tests were fine. What paid was the incidental
+integrity finding, so `/antislop-tests` became `/antislop-test-integrity`: four cheap checks,
+no instrumentation, deletion demoted to a byproduct behind an opt-in gate. A suite about
+deleting what doesn't earn its keep should apply that standard to itself.
 
 ### The two weak links
 

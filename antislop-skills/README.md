@@ -12,7 +12,8 @@ See [philosophy.md](philosophy.md).
    the input for judging every doc downstream (a doc's orphan status changes once AGENTS.md
    stops pointing at it).
 
-2. **`/antislop-tests`** — independent, runs any time
+2. **`/antislop-test-integrity`** — is the suite telling the truth? Four cheap checks,
+   minutes. Deletion is a byproduct, not the goal
 
 Both can run in parallel, in **separate worktrees**. Same checkout and the falsity sweep's
 edits corrupt the test sweep's coverage baseline. Separate PRs either way.
@@ -28,11 +29,11 @@ Skim them once per repo — opinions, not laws.
 
 Change one for a single run by saying so when the skill reads them back. Change it permanently
 by editing that skill's Directives table: `antislop-falsity/SKILL.md` or
-`antislop-tests/SKILL.md`. Not duplicated here — one fact, one home.
+`antislop-test-integrity/SKILL.md`. Not duplicated here — one fact, one home.
 
 Most likely to need changing:
 
-- the coverage drop that blocks a test deletion (currently: any drop, line or branch)
+- whether the coverage-gated deletion path is worth offering at all
 - which files count as per-turn context for your setup
 - whether verbose-but-true comments get cleaned up at all
 
@@ -52,5 +53,5 @@ that duplicates code and rots.
 
 ```sh
 ln -s ~/code/prompts/antislop-skills/antislop-falsity ~/.claude/skills/antislop-falsity
-ln -s ~/code/prompts/antislop-skills/antislop-tests   ~/.claude/skills/antislop-tests
+ln -s ~/code/prompts/antislop-skills/antislop-test-integrity ~/.claude/skills/antislop-test-integrity
 ```
