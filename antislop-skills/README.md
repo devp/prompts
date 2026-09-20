@@ -19,17 +19,29 @@
 
 2. **`/antislop-tests`** — independent, runs any time
 
-## Decisions
+Both can run in parallel, in **separate worktrees**. Same checkout and the falsity sweep's
+edits corrupt the test sweep's coverage baseline. Separate PRs either way.
 
-Defaults below are runnable. Change them in this file, not in the skills.
+Each SKILL.md is standalone — paste-able into a session that has no skills installed. Phase 1
+of the falsity sweep needs shell and repo access; without it the skill says so and stops.
 
+## Assumptions — check these
 
-| Decision | Default |
-| --- | --- |
-| Coverage drop that blocks a test deletion | any drop in line **or** branch coverage |
-| Verbose-but-true comment cleanup | ride-along only — inside files a falsity finding already opened. Never a standalone sweep |
-| Docs that are true today but duplicate code | out of scope here. Judgment call, handled by hand |
+Each skill is self-contained and carries its own **Directives** table near the top, which it
+reads out before doing anything. Those are the assumptions the sweep makes on your behalf.
+Skim them once per repo — opinions, not laws.
 
+Change one for a single run by saying so when the skill reads them back. Change it permanently
+by editing that skill's Directives table: `antislop-falsity/SKILL.md` or
+`antislop-tests/SKILL.md`. Not duplicated here — one fact, one home.
+
+Most likely to need changing:
+
+- the coverage drop that blocks a test deletion (currently: any drop, line or branch)
+- which files count as per-turn context for your setup
+- whether verbose-but-true comments get cleaned up at all
+
+Out of scope on purpose: docs that are true today but duplicate code. Judgment call, by hand.
 
 ## Plugin
 

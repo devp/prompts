@@ -9,30 +9,48 @@ description: >
 
 # antislop-falsity
 
-Hunt wrongness, not length. A true-but-verbose line costs ~nothing; a short wrong one costs a
-lot. See `../README.md` for why — don't restate it here or in your output.
+The problem is misleading context, not wasted tokens. A true-but-verbose line costs ~nothing;
+a short wrong one costs a lot.
 
-Read `../README.md` before starting. It holds the decisions.
+Deletion is recoverable (`git log --diff-filter=D`). Misleading content is not auditable —
+nothing fails, nobody notices, the agent confidently does the wrong thing. Rewriting and
+reviewing are both expensive. That asymmetry is why this sweep is deletion-biased.
+
+## Directives
+
+These drive the sweep. Read them to the user in one block at the start, and ask whether any
+should change for this repo before Phase 1. Edit this section to change them permanently.
+
+| # | Directive |
+| --- | --- |
+| D1 | Per-turn context is `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, and any instruction file under `.claude/`. Ruthless here — paid for on every turn of every agent |
+| D2 | On-demand content (docs the agent greps when relevant) is cheap. Conservative there |
+| D3 | Mechanical checks run before any judgment pass, always |
+| D4 | Never delete on your own judgment in Phase 2. Propose, let the user rule |
+| D5 | Verbose-but-true comments are ride-along only — inside files a finding already opened. Never a standalone sweep |
+| D6 | `README.md` and `CHANGELOG.md` are exempt. Code cannot answer "what is this project" or "what changed in 2.0" |
+| D7 | A comment carrying *why*, provenance, a rejected alternative, or an outside constraint (vendor bug, wire format, legal) is always kept. Code cannot express absence |
+| D8 | Never share a PR with test deletions. Different proof regime |
+| D9 | No shell or repo access means Phase 1 cannot run. Say so and stop. Phases 2-3 on pasted files are opinion, not findings — run them only if the user asks knowing that |
 
 ## Phase 0 — baseline
 
 Report before touching anything. Numbers, not prose.
 
-- token count of always-loaded tier: every `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, and any
-  `.claude/` instruction file in the repo
+- token count of the per-turn context (D1)
 - count of files under `docs/` (or equivalent) and their oldest/newest mtime
-- whether `claude-md-management` is enabled — if yes, run its audit now and keep only the Red
-  Flags section
+- whether the `claude-md-management` plugin is enabled. If yes, run its audit and keep **only**
+  its Red Flags section — its score rewards having more content, which is backwards here
 
 ## Phase 1 — mechanical falsity
 
-Free and automated. Not a judgment pass, so it runs first. Target: always-loaded tier only.
+Free and automated, so it runs first (D3). Per-turn context only.
 
 For every path, filename, command, make target, script, env var, and tool named in those
 files, check it exists:
 
 ```sh
-rg -o '`[^`]+`' AGENTS.md CLAUDE.md | sort -u          # candidate tokens
+rg -o '`[^`]+`' AGENTS.md CLAUDE.md | sort -u          # candidate tokens, then filter
 test -e <path>                                          # paths and files
 command -v <binary>                                     # binaries
 make -n <target>                                        # make targets, no side effects
@@ -43,57 +61,49 @@ Every miss is a finding. No judgment required — the reference is dead or it is
 
 Also mechanical:
 
-- same instruction stated in two always-loaded files (one is already wrong, or will be)
+- same instruction stated in two per-turn files (one is already wrong, or will be)
 - version pins in prose vs the lockfile/manifest
 - a documented command whose flags the installed tool rejects
 
-Stop here and report. Phase 2 needs a file already stripped of dead references — a false line
-often *reads* useful ("run `make test` before commit" looks like a keeper until the target is
-gone), and a usefulness pass would keep it.
+Stop and report. Phase 2 needs a file already stripped of dead references — a false line often
+*reads* useful ("run `make test` before commit" looks like a keeper until the target is gone),
+and a usefulness pass would keep it.
 
-## Phase 2 — simplify the always-loaded tier
+## Phase 2 — simplify the per-turn context
 
-User judgment, on survivors. Present each line with one of:
+User judgment, on survivors. Propose only (D4). Label each line:
 
 - **would happen anyway** — the model does this without being told
 - **earns its slot** — repo-specific, non-obvious, changes behavior
-- **belongs on-demand** — true and useful, but only relevant sometimes → move to a doc the
-  agent can grep, out of the always-loaded tier
+- **belongs on-demand** — true and useful but only sometimes relevant → move to a doc the
+  agent can grep, out of the per-turn context
 
-Don't delete on your own judgment in this phase. Propose, let the user rule.
-
-If a line is repo-specific but only *sometimes* relevant, moving beats deleting. Volume cost
-is real in tier 1 and ~zero in tier 2.
+Moving beats deleting for that third case (D1, D2).
 
 ## Phase 3 — semantic falsity
 
-Expensive, so it runs last and only on what survived. Now widen to docs and comments.
+Expensive, so last, and only on survivors. Widen to docs and comments.
 
 A finding requires a citation on both sides:
 
 > `docs/auth.md:41` says sessions expire after 24h.
 > `src/session.py:88` sets `MAX_AGE = 3600`.
 
-Rules:
-
-- comment contradicts adjacent code → delete the comment (stale comment is a bug, worse than
-  no comment)
+- comment contradicts adjacent code → delete the comment. A stale comment is a bug, worse
+  than no comment
 - doc describes behavior the code lacks → delete, or fix if the doc is the spec and the code
-  is the bug — say which you think it is
-- doc duplicates README or AGENTS.md → delete the copy, keep the one with the better home
-- comment whose only content is a ticket ref → inline one line of *why*, keep the link. An
-  agent with no tracker access cannot follow it
+  is the bug. Say which you think it is
+- doc duplicates README or AGENTS.md → delete the copy, keep the better home
+- comment whose only content is a ticket ref → inline one line of *why*, keep the link
 
-Exempt, always: `README.md`, `CHANGELOG.md`. Code cannot answer "what is this project" or
-"what changed in 2.0". Non-duplicative by construction.
-
-Keep, always: a comment carrying *why*, provenance, a rejected alternative, or a constraint
-imposed from outside the repo (vendor bug, wire format, legal). Code cannot express absence.
+That last rule exists because a ticket rots invisibly — it 404s on tracker migration — and an
+agent with no tracker access cannot reach it at all. A colocated comment at least gets read
+when someone reviews the line.
 
 ## Ride-along comment cleanup
 
-Only inside a file a Phase 3 finding already opened. Never a standalone sweep — a true,
-harmless, verbose comment costs nothing at read time and deleting it buys nothing.
+Only inside a file a Phase 3 finding already opened (D5). A true, harmless, verbose comment
+costs nothing at read time and deleting it buys nothing.
 
 When you do touch comments in a code file, prove the change is comments-only:
 
@@ -103,9 +113,9 @@ When you do touch comments in a code file, prove the change is comments-only:
 3. full test + typecheck + lint green
 
 Directive comments break the no-op — `# type: ignore`, `# noqa`, `# pragma: no cover`,
-`@ts-expect-error`, `eslint-disable`, `//go:build`, `# fmt: off` — and so do
-tooling-consumed ones (doctests, JSDoc used for types, OpenAPI annotations). Step 3 catches
-them loudly. That's the point: don't skip it, and don't hand-wave it as "should pass."
+`@ts-expect-error`, `eslint-disable`, `//go:build`, `# fmt: off` — and so do tooling-consumed
+ones (doctests, JSDoc used for types, OpenAPI annotations). Step 3 catches them loudly. Don't
+skip it and don't hand-wave it as "should pass."
 
 ## Output
 
@@ -117,5 +127,3 @@ Claims, ranked by blast radius. The user rules on the claim, not the diff.
 
 Batch by claim, small. If a phase produces nothing, say so and stop — a clean phase is a
 result. Do not pad the report to look productive.
-
-Never mix this with test deletions. Different proof regime, different PR.
