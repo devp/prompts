@@ -37,13 +37,13 @@ running it, it's too big — split it and say how.
   and name it as a decision point. Do not absorb it into the current increment.
 - **No speculative scaffolding.** Config, helpers, and abstractions arrive when a
   test needs them, not before.
-- One increment per turn. End the turn after step 4; don't chain increments to look
-  productive.
+- One increment per turn. End the turn after step 5; chain only mechanical continuation,
+  never to look productive.
 
 ## Reviewing a batch diff
 
-Batch review can't always be avoided — generated code, a teammate's PR. Don't read
-it top-to-bottom as text:
+Batch review can't always be avoided — generated code landing as a block. Don't read
+it top-to-bottom as text (a colleague's PR is `/code-review-skim`):
 
 1. Write (or ask the user for) 3–6 concrete questions the diff must answer: "does
    this handle the empty-list case?", "why this data structure over X?", "what
