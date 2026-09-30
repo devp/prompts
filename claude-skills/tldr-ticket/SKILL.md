@@ -9,7 +9,7 @@ description: >
   says or whether anything in it matters. Trigger without the word "tldr" too — "what's the
   actual ask here" or "what does this one actually say" pointed at a ticket counts. Works on
   requests, reports, and decision records alike. Compresses source text written by someone else,
-  not Claude's own replies (that's the `caveman` skill) — and not for a ticket the user is
+  not Claude's own replies — and not for a ticket the user is
   about to act on, where `ticket-read-along` applies instead.
 ---
 
