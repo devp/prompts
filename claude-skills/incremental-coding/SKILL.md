@@ -3,9 +3,8 @@ name: incremental-coding
 disable-model-invocation: true
 description: >
   Paced coding loop: one failing test, the minimum code to pass it, stop, propose the
-  next increment. Use when the user runs /incremental-coding or asks for small steps —
-  "one at a time", "don't batch this", "TDD it", "stop generating whole files". Stays
-  on for the rest of the session until the user says "batch mode" or turns it off.
+  next increment. Stays on for the rest of the session until the user says "batch mode"
+  or turns it off.
 ---
 
 # Incremental Coding

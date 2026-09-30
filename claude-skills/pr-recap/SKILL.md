@@ -2,10 +2,8 @@
 name: pr-recap
 disable-model-invocation: true
 description: >
-  Generate a screen-free audio-recap transcript for a set of commits or PRs,
-  for listening away from the screen and driving handwritten review notes.
-  Trigger when the user asks for a "recap", "audio summary", or "PR recap"
-  for specific commits, SHAs, or PR numbers.
+  Generate a screen-free audio-recap transcript for a set of commits or PRs, for
+  listening away from the screen and driving handwritten review notes.
 ---
 
 # PR Recap Generator

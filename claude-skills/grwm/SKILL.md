@@ -2,11 +2,9 @@
 name: grwm
 disable-model-invocation: true
 description: >
-  Morning briefing. Pulls work journal + task list + calendar, surfaces one best-impact
-  AM move plus today's focuses. Use when user runs /grwm or asks "what should I work on
-  this morning" / "help me plan today". Inputs are all optional — Todoist/Google
-  Calendar/Slack MCP if connected, pasted journal/agenda text otherwise, or just ask the
-  user directly.
+  Morning briefing. Pulls work journal + task list + calendar + Slack, surfaces one
+  best-impact AM move plus today's focuses. Inputs are all optional — MCP if connected,
+  pasted text otherwise, or just ask.
 ---
 
 # grwm

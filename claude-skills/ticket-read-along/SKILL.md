@@ -2,12 +2,8 @@
 name: ticket-read-along
 disable-model-invocation: true
 description: >
-  Walk the user through a ticket, PR, or spec chunk-by-chunk with comprehension checks,
-  instead of summarizing it away. Trigger on "walk me through this ticket", "help me
-  actually read this", "I need to understand this one properly". For tickets the user is
-  about to act on, where the goal is reading with retention rather than skipping. An
-  ordinary "tldr" or "summarize" request is `tldr-ticket`, not this — never both on the
-  same request.
+  Walk a ticket, PR, or spec chunk by chunk with comprehension checks instead of
+  summarizing it away. For something about to be acted on, where the goal is retention.
 ---
 
 # ticket-read-along

@@ -3,11 +3,8 @@ name: notion-skim
 disable-model-invocation: true
 description: >
   Walk a long Notion page section by section at skim pace: for each section, a two-sentence
-  gist the user rewords back, plus up to three findings they rule on. Trigger on "skim this
-  Notion page", "help me skim this doc", "walk this spec at skim pace", or a pasted Notion
-  URL plus "what's in here". For a doc too long to read but too load-bearing to summarize
-  away. A plain "tldr this" is `tldr-ticket`; reading one properly for retention before
-  acting is `ticket-read-along`. Never run two of the three on the same request.
+  gist the user rewords back, plus up to three findings they rule on. For a doc too long to
+  read but too load-bearing to summarize away.
 ---
 
 # notion-skim

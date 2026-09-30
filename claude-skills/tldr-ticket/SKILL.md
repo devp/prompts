@@ -4,13 +4,7 @@ disable-model-invocation: true
 description: >
   Compress a long Linear ticket, GitHub PR description, or review comment to a one-sentence
   TL;DR plus a few "watch for" bullets, added only when something crucial would otherwise be
-  lost. Trigger when the user asks to "tldr", "compress", "boil down", or "summarize" a
-  ticket/issue/PR, including when they paste a link or a wall of ticket text and ask what it
-  says or whether anything in it matters. Trigger without the word "tldr" too — "what's the
-  actual ask here" or "what does this one actually say" pointed at a ticket counts. Works on
-  requests, reports, and decision records alike. Compresses source text written by someone else,
-  not Claude's own replies — and not for a ticket the user is
-  about to act on, where `ticket-read-along` applies instead.
+  lost. Works on requests, reports, and decision records alike.
 ---
 
 # tldr-ticket

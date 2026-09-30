@@ -2,9 +2,8 @@
 name: code-review-skim
 disable-model-invocation: true
 description: >
-  Walk a PR file by file at skim pace: for each file, a two-sentence gist the
-  reviewer rewords back, plus up to three findings they rule on. Trigger on
-  "help me skim", "skim this PR", or "skim review".
+  Walk a colleague's PR file by file at skim pace: for each file, a two-sentence gist
+  the reviewer rewords back, plus up to three findings they rule on.
 ---
 
 # Code Review Skim

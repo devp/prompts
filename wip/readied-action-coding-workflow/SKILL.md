@@ -3,13 +3,9 @@ name: readied-action-coding-workflow
 disable-model-invocation: true
 description: >
   An agent coding workflow that schedules parallel agent work around the developer's
-  comprehension rate rather than agent throughput. Use when the developer asks to work
-  in "readied action" mode, or asks for incremental agent-assisted coding where they
-  drive one thread while unpicked work proceeds unattended in worktrees and parks until
-  they come up for air. Triggers on phrases like "readied action mode", "let's work the
-  readied action way", or a request to pair incrementally while parallel branches wait
-  in the background. Not for one-off code generation and not for batch review of a large
-  diff — this is a sustained working mode for a session, not a single request.
+  comprehension rate rather than agent throughput: the developer drives one thread while
+  unpicked work proceeds unattended in worktrees and parks until they come up for air. A
+  sustained working mode for a session, not a single request.
 ---
 
 # Readied Action Coding Workflow
