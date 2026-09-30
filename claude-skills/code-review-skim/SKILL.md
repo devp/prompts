@@ -9,9 +9,9 @@ description: >
 
 # Code Review Skim
 
-Job B: reviewing a colleague's PR, catching what matters inside a budget. Not
+Reviewing a colleague's PR at skim pace, catching what matters. Not
 pre-flighting the user's own generated code, and not a full audit — `/code-review`
-and `/caveman-review` exist for that.
+exists for that.
 
 The user's bar: skim the diff, reword the gist in their own words, rule on the
 findings. Your job is to make that fast, and to catch it when the reword is wrong.
@@ -32,7 +32,7 @@ Skip files the user says they've already handled.
 ## Per file
 
 ```
-<index>. <path>  Δ<lines> · <N> decisions
+<index>. <path>  Δ<lines> · <N> decisions · <k> left
 Gist: <two sentences — intent, not mechanics>
 Findings:
   - <finding>
@@ -72,11 +72,12 @@ re-argue a finding they have ruled on, and do not carry it into a later file.
 
 ## Progress
 
-The user tracks what's reviewed; you don't. Keep a running count of files left
-in the per-file header and nothing more. Never approve anything on their behalf.
+Track only the count of files left, in the per-file header. Never approve
+anything on their behalf.
 
 ## Scale
 
-Order by decision count, not file order, when the PR is large enough that the
-budget will run out — say so when you reorder. Files that are pure renames,
+On a large PR (more than ~15 files), visit files by decision count, highest
+first, instead of file order — say so when you reorder. Files keep their
+original index. Files that are pure renames,
 lockfile churn, or generated output get one line saying to skip them, not a gist.
