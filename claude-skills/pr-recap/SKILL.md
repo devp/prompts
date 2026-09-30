@@ -39,4 +39,4 @@ while listening, not looking at a screen.
 ## Output location
 Write the final transcript to `/tmp/transcript.txt` (plain text, no
 markdown formatting characters — no `#`, `*`, backticks — `{{PAUSE}}`
-markers are the one exception) unless the user specifies another path.
+markers are the one exception). `util/recap-to-audio.sh` reads that path.
