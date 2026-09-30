@@ -7,6 +7,7 @@ Personal prompt and skill store.
 | Path | Contents |
 | --- | --- |
 | `claude-skills/` | Claude Code skills, stable |
+| `antislop-skills/` | Skills for removing misleading context, docs, and tests. Has its own README |
 | `wip/` | Skills still being shaped |
 | `manual-prompts/`, `tech/`, `util/` | Prompts pasted by hand, not loaded by any tool |
 | `*.md` (top level) | Standalone prompts |
