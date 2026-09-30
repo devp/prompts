@@ -28,8 +28,8 @@ next action, fast.
    - scoping up a task that was already scoped
 4. If they're stuck (not just drifting), name the actual BLOCKER — not the symptom, not
    the context — then the one move that unsticks it:
-   - stuck in Phase 1 (spike/exploration) when the work should be in Phase 2/3
-     (requirements closure or delegation) — name that phase mismatch directly
+   - still exploring when the work needs requirements closed or handed off — name that
+     mismatch directly
    - blocked on someone/something external — say so, name the escalation move
    - fog/resistance with no external cause — name it as that, don't dress it up as a
      blocker
@@ -42,8 +42,7 @@ next action, fast.
 ## Tone
 
 Coach, not checklist. Short questions, reflect back what's actually stuck vs what's noise.
-This is one of the few times human-register prose fits even outside discussion mode — user
-is stuck, not scanning a doc.
+Human-register prose fits here — user is stuck, not scanning a doc.
 
 ## Guardrails
 
