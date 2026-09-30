@@ -27,8 +27,8 @@ Scan for the three things that reliably blow up my estimates.
 Flag each present one **now**, out loud, before committing to anything.
 
 - [ ] **Cross-team / cross-tech seams.** Does this touch a system, service,
-      or team I don't own? (auth, another swimlane's surface, a legacy
-      PHP/Laravel/WP corner, someone else's API, another team's approval.)
+      or team I don't own? (auth, another swimlane's surface, a
+      legacy corner, someone else's API, another team's approval.)
       Every seam is an unknown that isn't mine to resolve alone.
 
 - [ ] **Leadership / stakeholder visibility.** Is anyone senior watching?
