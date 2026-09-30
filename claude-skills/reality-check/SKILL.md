@@ -1,5 +1,6 @@
 ---
 name: reality-check
+disable-model-invocation: true
 description: >
   Midday brain-fog coach. Short back-and-forth to cut through overwhelm and land on the
   single smallest next action. Use when user runs /reality-check or says things like "I'm

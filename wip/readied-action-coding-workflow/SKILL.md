@@ -1,5 +1,6 @@
 ---
 name: readied-action-coding-workflow
+disable-model-invocation: true
 description: >
   An agent coding workflow that schedules parallel agent work around the developer's
   comprehension rate rather than agent throughput. Use when the developer asks to work

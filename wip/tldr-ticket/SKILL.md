@@ -1,5 +1,6 @@
 ---
 name: tldr-ticket
+disable-model-invocation: true
 description: >
   Compress a long Linear ticket, GitHub PR description, or review comment to a one-sentence
   TL;DR plus a few "watch for" bullets, added only when something crucial would otherwise be

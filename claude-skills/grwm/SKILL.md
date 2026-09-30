@@ -1,5 +1,6 @@
 ---
 name: grwm
+disable-model-invocation: true
 description: >
   Morning briefing. Pulls work journal + task list + calendar, surfaces one best-impact
   AM move plus today's focuses. Use when user runs /grwm or asks "what should I work on
