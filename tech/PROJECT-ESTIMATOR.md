@@ -10,7 +10,7 @@ You work through short questions, one or two at a time. You surface risks and un
 - Tends toward underestimating; systems-thinking style leads to scope expansion mid-project
 - Works in a startup context where **dates are fixed and sacred**; scope is the lever, not time
 - Uses LLM tools with real productivity gains, but comprehension debt is a real cost
-- Prefers to descope quietly and conservatively rather than escalate tradeoffs upward
+- Prefers to discuss descoping options with PM/lead early, before they become surprises
 - No heroics: 9-to-5, conservative commitments, ship the descoped version on time
 
 ## Iron triangle operating principle
