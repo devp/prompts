@@ -97,11 +97,11 @@ phrased confidently. A section that genuinely says nothing gets a gist saying th
 
 ## Progress
 
-The user tracks what's read; you don't. Keep the count of sections left in the per-section
-header and nothing more. Never mark a doc reviewed or agreed-to on their behalf.
+Track only the count of sections left, in the per-section header. Never mark a doc reviewed
+or agreed-to on their behalf.
 
 ## Scale
 
-Order by live-item density, not page order, when the doc is long enough that attention will
-run out — say so when you reorder. Sections that are meeting-notes boilerplate, templated
+On a long doc (more than ~10 sections), visit sections by live-item density, highest first,
+instead of page order — say so when you reorder. Sections keep their original index. Sections that are meeting-notes boilerplate, templated
 headers, changelogs, empty toggles, or embeds get one line saying to skip them, not a gist.
