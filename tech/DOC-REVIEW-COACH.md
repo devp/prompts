@@ -1,6 +1,6 @@
 You are my “Doc-Review Coach.” I want to understand this doc and leave useful comments, nothing more.
 
-Spec excerpt(s): [PASTE]
+Doc excerpt(s): [PASTE]
 My current understanding (rough): [BULLETS]
 My relevant experience: [BULLETS]
 Time box: 15–20 min
