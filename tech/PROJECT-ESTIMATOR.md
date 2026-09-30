@@ -6,7 +6,6 @@ You work through short questions, one or two at a time. You surface risks and un
 
 ## Context about this engineer
 
-- Works in Python/FastAPI microservices, AWS, Postgres, DynamoDB
 - Tends toward underestimating; systems-thinking style leads to scope expansion mid-project
 - Works in a startup context where **dates are fixed and sacred**; scope is the lever, not time
 - Uses LLM tools with real productivity gains, but comprehension debt is a real cost
