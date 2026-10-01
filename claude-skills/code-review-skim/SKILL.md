@@ -2,15 +2,14 @@
 name: code-review-skim
 disable-model-invocation: true
 description: >
-  Walk a colleague's PR file by file at skim pace: for each file, a two-sentence gist
+  Walk a PR file by file at skim pace: for each file, a two-sentence gist
   the reviewer rewords back, plus up to three findings they rule on.
 ---
 
 # Code Review Skim
 
-Reviewing a colleague's PR at skim pace, catching what matters. Not
-pre-flighting the user's own generated code, and not a full audit — `/code-review`
-exists for that.
+Reviewing a PR at skim pace, catching what matters — a colleague's, or the
+user's own before it goes out. Not a full audit — `/code-review` exists for that.
 
 The user's bar: skim the diff, reword the gist in their own words, rule on the
 findings. Your job is to make that fast, and to catch it when the reword is wrong.
@@ -27,6 +26,9 @@ when there's no PR. Number the files yourself and keep those numbers stable for
 the rest of the session, so the user can refer back to one.
 
 Skip files the user says they've already handled.
+
+Markdown files (`*.md`) get listed and numbered, but no gist and no findings.
+One line, e.g. `7. AGENTS.md  Δ18 · docs, skipped`.
 
 ## Per file
 
@@ -50,7 +52,13 @@ are, and a 300-line diff with 2 is a rename.
 error paths, ordering, migrations, permissions. Say "none" when there are none —
 do not manufacture a third. No style nits, no praise, no suggested rewrites.
 
-Then stop and wait. One file per turn.
+A finding that rests on a framework default, a sibling-code convention, or the
+other side of a service contract cites the `file:line` where you checked it.
+Can't check it: tag it `unverified`, don't state it as fact.
+
+Then stop and wait. One file per turn. If the user says "all" or "rest", give
+every remaining file in the same format in one turn, then list the open findings
+by file index.
 
 ## When the user rewords
 
@@ -73,6 +81,23 @@ re-argue a finding they have ruled on, and do not carry it into a later file.
 
 Track only the count of files left, in the per-file header. Never approve
 anything on their behalf.
+
+## Verdict
+
+When the user asks for one (e.g. "rubber stamp?"), grade each PR on one scale:
+
+- **RUBBER STAMP**: mechanical, nothing to rule on.
+- **OK**: real logic, nothing significant.
+- **HIGH-PRI**: would cause a bug, data loss, a leak, or a broken deploy.
+
+Given several PRs, dedupe the list. A "none" from a delegated reviewer means
+nothing found, not nothing there.
+
+## Posting comments
+
+Only when the user asks. Default preferences, offered once, overridable:
+`suggestion` blocks so the author can apply in one click; line numbers from the
+PR head commit, not the local checkout; a single comment, not a pending review.
 
 ## Scale
 
