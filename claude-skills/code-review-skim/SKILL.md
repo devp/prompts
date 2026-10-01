@@ -84,7 +84,7 @@ anything on their behalf.
 
 ## Verdict
 
-When the user asks for one (e.g. "rubber stamp?"), grade each PR on one scale:
+Grade each PR on one scale:
 
 - **RUBBER STAMP**: mechanical, nothing to rule on.
 - **OK**: real logic, nothing significant.
