@@ -1,0 +1,6 @@
+{"type":"system","subtype":"init"}
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"ToolSearch","input":{}}]}}
+{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"t1","content":"No matching deferred tools found."}]}}
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t2","name":"mcp__claude_ai_Linear__get_issue","input":{"id":"X-1"}}]}}
+{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"t2","content":[{"type":"text","text":"{\"title\":\"Fix the thing\",\"priority\":2,\"description\":\"First line.\\nSecond line, really.\"}"}]}]}}
+{"type":"assistant","message":{"content":[{"type":"text","text":"done"}]}}

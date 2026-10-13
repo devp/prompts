@@ -1,0 +1,95 @@
+it'?s worth noting
+it is worth noting
+it'?s important to (note|remember|understand)
+\bdelv(e|es|ing)\b
+in today'?s
+\blandscape\b
+\bleverag(e|es|ed|ing)\b
+\brobust\b
+\bseamless(ly)?\b
+\bcomprehensive\b
+\bcrucial(ly)?\b
+\bfurthermore\b
+\badditionally\b
+\bmoreover\b
+in (conclusion|summary)
+key takeaways?
+let'?s dive
+game[- ]changer
+plays? an? (crucial|vital|key|pivotal) role
+\bbest practices\b
+whether you'?re
+\bnavigat(e|ing) the\b
+\bunlock(s|ing)?\b
+\bempower(s|ing)?\b
+\bstreamlin(e|es|ed|ing)\b
+\bholistic\b
+\bgenuine(ly)?\b
+\bhonestly\b
+\bnotably\b
+\bimportantly\b
+\bessentially\b
+\bfundamentally\b
+\bultimately\b
+here'?s (the|what|why|how)
+the (key|real|core|big) (insight|issue|question|problem|point|thing|takeaway)
+\bthe short version\b
+\bbottom line\b
+\btl;?dr\b
+\bin short\b
+\bthat said\b
+\bto be clear\b
+worth (flagging|calling out|mentioning)
+\bload[- ]bearing\b
+\bthe crux\b
+not (just|only|merely) [^.]{1,40}(—|, but)
+it'?s not [^.]{1,40}[—;,] it'?s
+\bthis (ensures|keeps|lets|means)\b
+\bhappy path\b
+\bfootguns?\b
+\bsanity[- ]check\b
+\bfirst[- ]class\b
+\bsingle source of truth\b
+\bat a glance\b
+\bgoing forward\b
+\bwhere (applicable|appropriate|relevant)\b
+\bif (applicable|needed|necessary)\b
+\bas needed\b
+\bin order to\b
+\bthe fact that\b
+\bin terms of\b
+an? (number|variety|range|host) of
+at the end of the day
+it should be noted
+as (mentioned|noted|discussed|described) (above|earlier|below|previously)
+\bnote that\b
+\bkeep in mind\b
+make sure (to|that)
+\bensur(e|es|ing) that\b
+\bsimply\b
+\bclearly\b
+\bobviously\b
+\bvarious\b
+\bsignificant(ly)?\b
+\beffectively\b
+\bpotentially\b
+\bappropriate(ly)?\b
+you('ll| will) (want|need) to
+feel free to
+let me know
+hope this helps
+happy to help
+great question
+you'?re (absolutely )?right
+i'?d (recommend|suggest)
+consider (using|adding)
+(it )?may be worth
+\bmay want to\b
+helps? (ensure|keep|make)
+allows? (you|us|teams?) to
+\b(is|are) designed to\b
+\baims? to\b
+\bserves? as\b
+\bacts? as an?\b
+in a (way|manner) that
+^\s*[-*] \*\*[^*]+\*\*:

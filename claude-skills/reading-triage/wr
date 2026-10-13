@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# usage: wr [--stats] [file|url]   (no arg: stdin if piped, else clipboard)
+# Triage whether a document is worth reading. --stats skips the LLM.
+# Notion / Linear / Slack-thread URLs fetch via claude.ai connectors; GitHub PR/issue URLs via gh.
+# WR_MODEL overrides the model (default: sonnet).
+set -euo pipefail
+here=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
+
+stats_only=
+if [[ ${1:-} == --stats ]]; then stats_only=1; shift; fi
+src=${1:-}
+
+# Fetch via a claude.ai connector; the doc is lifted from the tool_result so no model re-types it.
+mcp_fetch() {  # mcp_fetch <tool> <url>
+  echo "Fetch $2 with one tool call, then reply: done" |
+    claude -p --model haiku --output-format stream-json --verbose --no-session-persistence \
+      --allowedTools ToolSearch "$1" --disallowedTools WebFetch WebSearch Bash Task Skill Read |
+    jq -rs --arg t "$1" '
+      [.[] | select(.type == "assistant") | .message.content[] | select(.type == "tool_use" and .name == $t) | .id] as $ids
+      | .[] | select(.type == "user") | .message.content[]
+      | select(.type == "tool_result" and (.is_error | not) and (.tool_use_id | IN($ids[])))
+      | .content | if type == "array" then map(.text // empty) | join("\n") end
+      | (fromjson? // .) | if type == "object" then [.[] | strings] | join("\n\n") end'
+}
+mcp_tool=
+case $src in
+  https://*notion.so/* | https://*notion.com/*) mcp_tool=mcp__claude_ai_Notion__notion-fetch ;;
+  https://linear.app/*/issue/*) mcp_tool=mcp__claude_ai_Linear__get_issue ;;
+  https://*.slack.com/archives/*/p*) mcp_tool=mcp__claude_ai_Slack__slack_read_thread ;;
+  https://docs.google.com/* | https://*.slack.com/* | https://linear.app/*)
+    echo "wr: can't fetch $src without a login; fetch it in a Claude session and pipe the text in" >&2; exit 1 ;;
+esac
+
+if [[ -n $mcp_tool ]]; then
+  # haiku sometimes answers without calling the tool; one retry covers it
+  for _ in 1 2; do
+    doc=$(mcp_fetch "$mcp_tool" "$src") || true
+    [[ $doc =~ [^[:space:]] ]] && break
+  done
+elif [[ $src =~ ^https://github\.com/[^/]+/[^/]+/(pull|issues)/[0-9]+ ]]; then
+  kind=${BASH_REMATCH[1]/pull/pr}
+  doc=$(gh "${kind%s}" view "$src")
+elif [[ $src =~ ^https?:// ]]; then
+  doc=$(curl -fsSL "$src" | pandoc -f html -t plain --wrap=none)
+elif [[ -n $src ]]; then
+  doc=$(<"$src")
+elif [[ ! -t 0 ]]; then
+  doc=$(cat)
+else
+  doc=$(pbpaste)
+fi
+[[ $doc =~ [^[:space:]] ]] || { echo "wr: empty input" >&2; exit 1; }
+
+words=$(wc -w <<<"$doc" | tr -d ' ')
+tics=$(rg -o -i -f "$here/tics.txt" <<<"$doc" | tr '[:upper:]' '[:lower:]' | sort | uniq -c | sort -rn || true)
+tic_total=$(awk '{n+=$1} END {print n+0}' <<<"$tics")
+count() { rg -c "$@" <<<"$doc" || echo 0; }
+hits() { { rg -o "$1" <<<"$doc" || true; } | wc -l | tr -d ' '; }
+headings=$(count '^#{1,6}\s')
+bold=$(hits '\*\*[^*]+\*\*')
+bullets=$(count '^\s*([-*+]|\d+\.)\s')
+lines=$(count '\S')
+dashes=$(hits '—')
+arrows=$(hits '→')
+templates=$(rg -o -i '^#{1,6}\s*(summary|overview|tl;?dr|background|context|motivation|goals?|non-goals?|scope|out of scope|approach|alternatives( considered)?|risks?|open (questions|decisions)|rollout|test plan|testing|next steps|future work|follow-ups?|key takeaways|conclusion|faq)\b' <<<"$doc" |
+  sed -E 's/^#+[[:space:]]*//' | sort -fu | paste -sd, - || true)
+stats="words: $words (~$(( (words + 229) / 230 )) min)
+tics: $tic_total ($(( tic_total * 1000 / words ))/1k words)
+structure: $headings headings ($(( headings * 1000 / words ))/1k words) · $bold bold · bullets $(( bullets * 100 / lines ))% of lines · $dashes em-dashes · $arrows arrows · template sections: ${templates:-none}
+$tics"
+
+if [[ -n $stats_only ]]; then echo "$stats"; exit; fi
+
+echo "$stats" | head -3
+printf '<stats>\n%s\n</stats>\n<document>\n%s\n</document>\n' "$stats" "$doc" |
+  claude -p --model "${WR_MODEL:-sonnet}" --tools "" --strict-mcp-config \
+    --no-session-persistence --system-prompt-file "$here/rubric.md" |
+  awk '/^verdict:/ {v = 1} v {print; next} {rest = rest $0 "\n"} END {printf "%s", rest}'
