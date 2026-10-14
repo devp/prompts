@@ -3,7 +3,8 @@ name: code-review-skim
 disable-model-invocation: true
 description: >
   Skim-review a PR: verdict and blast radius up front, then tagged findings
-  in descending importance, then a scoped approval line.
+  in descending importance, then a scoped approval line. Author mode (arg
+  `self`) preflights the user's own change and drafts the PR description.
 ---
 
 # Code Review Skim
@@ -18,7 +19,7 @@ and to leave a visible record of what was and wasn't reviewed.
 ## Start immediately
 
 No intake interview. No strategy question, no time/energy check, no provenance
-fork. Get the diff and go.
+fork. Get the diff and go. Sole exception: the author-mode question below.
 
 ## Inputs
 
@@ -119,16 +120,48 @@ re-argue a finding they have ruled on.
 A draft for the user, stating scope: what was reviewed, what wasn't. Never
 approve anything on their behalf.
 
-## The user's own PR
+## Author mode
 
-When the PR author is the current `gh` user, replace the approval line with:
+For the user's own change, before anyone else reviews it. Their own read is
+the real review; this pass points it at the right lines. No quizzing, no
+asking them to justify the code.
+
+Ask one yes/no question — "author mode?" — before starting when any of these
+hold, then proceed:
+
+- the PR is a draft
+- the PR author is the current `gh` user
+- the current `gh` user is an assignee (not just a requested reviewer)
+- there is no PR, and the branch's commits are by the current `git` user
+
+The argument `self` turns it on without asking.
+
+Additions to the output:
+
+- Two more finding tags: **cut** for extras the ticket didn't ask for
+  (abstractions, config, error handling, files); **simpler?** for a new
+  dependency or pattern where something simpler exists — name it.
+- `Own these:` after findings — the CLOSE READ `path:line` ranges the user
+  should be able to rewrite from memory. They check that themselves.
+- Generated tests covering CLOSE READ paths: say whether they'd fail if the
+  code broke. Unknown → `unverified`. Mutate code to find out only when asked,
+  on a clean tree, reverting each mutation.
+- If the diff is too big to hold in one head, propose split points.
+
+Replace the approval line with a PR description draft:
 
 ```
+What changed: <...>
+Covers: <ticket / doc>
+Checked: <what, and how>
+Least sure about: <...>
+Not touched: <...>
+Generated-heavy: <left for the user>
 Ask reviewers: <one specific thing self-review misses>
 ```
 
-e.g. "is this contract what the consumer expects?" — not a general review
-request.
+The ask is specific — "is this contract what the consumer expects?" — not a
+general review request.
 
 ## Several PRs
 
