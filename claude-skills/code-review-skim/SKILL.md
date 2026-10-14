@@ -2,8 +2,8 @@
 name: code-review-skim
 disable-model-invocation: true
 description: >
-  Walk a PR file by file at skim pace: for each file, a two-sentence gist
-  the reviewer rewords back, plus up to three findings they rule on.
+  Skim-review a PR: verdict and blast radius up front, then tagged findings
+  in descending importance, then a scoped approval line.
 ---
 
 # Code Review Skim
@@ -11,97 +11,139 @@ description: >
 Reviewing a PR at skim pace, catching what matters — a colleague's, or the
 user's own before it goes out. Not a full audit — `/code-review` exists for that.
 
-The user's bar: skim the diff, reword the gist in their own words, rule on the
-findings. Your job is to make that fast, and to catch it when the reword is wrong.
+The author owns diagnosis; their self-review is the real review. This pass
+exists to catch cheap major problems, to say where a close read is warranted,
+and to leave a visible record of what was and wasn't reviewed.
 
 ## Start immediately
 
 No intake interview. No strategy question, no time/energy check, no provenance
-fork. Get the file list and go.
+fork. Get the diff and go.
 
-## Getting the diff
+## Inputs
 
 Never ask the user to paste a diff. Use `gh pr diff`, or `git diff <base>...<head>`
-when there's no PR. Number the files yourself and keep those numbers stable for
-the rest of the session, so the user can refer back to one.
+when there's no PR. Skip files the user says they've already handled.
 
-Skip files the user says they've already handled.
+Intent comes from the PR description and any ticket or doc it links. Fetch
+those with whatever tools are available. Never ask the user for them. If none
+is reachable, say so in one line and judge intent from the description alone.
 
-Markdown files (`*.md`) get listed and numbered, but no gist and no findings.
-One line, e.g. `7. AGENTS.md  Δ18 · docs, skipped`.
+## Reading
 
-## Per file
+Weigh files by decisions, not lines: branches, external calls, state mutations,
+error paths in the changed lines. A 12-line diff with 9 decisions is where the
+bugs are; a 300-line diff with 2 is a rename. Pure renames, lockfile churn,
+generated output, and Markdown get no findings.
 
-```
-<index>. <path>  Δ<lines> · <N> decisions · <k> left
-Gist: <two sentences — intent, not mechanics>
-Findings:
-  - <finding>
-  - <finding>
-```
+Look at what the diff does, not what the description highlights:
 
-**Gist**: what this file's change is for and what it does to reach that. Two
-sentences, hard cap. Name the mechanism, not the line-by-line.
+- **Shape**: files touched and size vs. what the ticket implies. Anything
+  surprising is worth a line.
+- **Missing**: tests for new behavior, rollback or migration handling, a
+  contract change with no matching consumer change.
+- **Seams and state**: boundaries between components, shared state, ordering.
+  Self-review by the author (or their agent) is weakest here.
+- **Intent**: does the diff do what the ticket meant, not just what it said?
 
-**Decisions**: count branches, external calls, state mutations, and error paths
-in the changed lines. This is the real size of a file, not its line count. Call
-it out when the two diverge — a 12-line diff with 9 decisions is where the bugs
-are, and a 300-line diff with 2 is a rename.
+## Blast radius
 
-**Findings**: zero to three, most consequential first. Correctness, contracts,
-error paths, ordering, migrations, permissions. Say "none" when there are none —
-do not manufacture a third. No style nits, no praise, no suggested rewrites.
+Ask: if this PR were wrong in a way a skim can't see, what happens? Weigh
+severity, detectability (loud vs. silent), reversibility.
 
-A finding that rests on a framework default, a sibling-code convention, or the
-other side of a service contract cites the `file:line` where you checked it.
-Can't check it: tag it `unverified`, don't state it as fact.
+- **SKIM**: failures would be loud and revertable.
+- **CLOSE READ**: something could fail silently or irreversibly — migrations,
+  data writes, auth, API/contract changes, parity with existing query logic.
+  Name the files that put it here; those are the ones the user should read.
 
-Then stop and wait. One file per turn. If the user says "all" or "rest", give
-every remaining file in the same format in one turn, then list the open findings
-by file index.
-
-## When the user rewords
-
-This is the point of the skill. Their reword is the comprehension check.
-
-- Right: say so in a few words and move on. No elaboration, no "exactly, and
-  also...".
-- Wrong or partial: say what they missed in one line. Plainly, no coaching
-  voice, no softening preamble.
-
-If they skip the reword and just say next, let them. Don't chase it.
-
-## Findings are hypotheses
-
-The user rules on each one. Their verdict closes it — "not a problem here",
-"already handled upstream", "yes, fix" are all complete answers. Do not
-re-argue a finding they have ruled on, and do not carry it into a later file.
-
-## Progress
-
-Track only the count of files left, in the per-file header. Never approve
-anything on their behalf.
+This is a separate axis from the verdict. A PR can be OK with nothing found
+and still be CLOSE READ.
 
 ## Verdict
-
-Grade each PR on one scale:
 
 - **RUBBER STAMP**: mechanical, nothing to rule on.
 - **OK**: real logic, nothing significant.
 - **HIGH-PRI**: would cause a bug, data loss, a leak, or a broken deploy.
 
-Given several PRs, dedupe the list. A "none" from a delegated reviewer means
-nothing found, not nothing there.
+## Output
+
+One turn, this shape:
+
+```
+Verdict: <RUBBER STAMP | OK | HIGH-PRI> · Blast radius: <SKIM | CLOSE READ>
+<one line: why — for CLOSE READ, which files and what could fail silently>
+
+Shape: <N files, Δ lines; surprises vs. ticket, or "as expected">
+Missing: <what's absent, or "none">
+Intent: <matches | drifts: how>
+
+Findings:
+  1. [blocking] path:line — <finding>
+  2. [non-blocking] path:line — <finding>
+  3. [follow-up] path:line — <finding>
+
+Approve with: Reviewed <X, Y>. Didn't dig into <Z>.
+```
+
+Omit `Findings:` when there are none. Then stop; the user rules on findings
+and may ask about any file.
+
+## Findings
+
+Most consequential first, across all files. Correctness, contracts, error
+paths, ordering, migrations, permissions. No style nits, no praise, no "have
+you considered". Don't manufacture findings to fill the list.
+
+Tags:
+
+- **blocking**: only when the blast-radius call supports it — the failure
+  would be silent, irreversible, or severe.
+- **non-blocking**: worth a one-line comment; the author can take it or not.
+- **follow-up**: a want, not a need. Not a comment — the user merges and does
+  it themselves.
+
+A finding that rests on a framework default, a sibling-code convention, or the
+other side of a service contract cites the `file:line` where you checked it.
+Can't check it: tag it `unverified`, don't state it as fact.
+
+Judge the code, not the author. Don't speculate about their workflow or depth.
+
+## Findings are hypotheses
+
+The user rules on each one. Their verdict closes it — "not a problem here",
+"already handled upstream", "yes, fix" are all complete answers. Do not
+re-argue a finding they have ruled on.
+
+## Approval line
+
+A draft for the user, stating scope: what was reviewed, what wasn't. Never
+approve anything on their behalf.
+
+## The user's own PR
+
+When the PR author is the current `gh` user, replace the approval line with:
+
+```
+Ask reviewers: <one specific thing self-review misses>
+```
+
+e.g. "is this contract what the consumer expects?" — not a general review
+request.
+
+## Several PRs
+
+One output block per PR. Dedupe findings that recur across them. A "none" from
+a delegated reviewer means nothing found, not nothing there.
 
 ## Posting comments
 
 Only when the user asks. Default preferences, offered once, overridable:
-`suggestion` blocks so the author can apply in one click; line numbers from the
-PR head commit, not the local checkout; a single comment, not a pending review.
+`suggestion` blocks or the exact change wanted plus a one-line reason, so
+acceptance is one click; label blocking comments as blocking; don't post
+follow-ups; neutral wording; line numbers from the PR head commit, not the
+local checkout; a single comment, not a pending review.
 
 ## Scale
 
-On a large PR (more than ~15 files), visit files by decision count, highest
-first, instead of file order — say so when you reorder. Files keep their
-original index. Files that are pure renames,
-lockfile churn, or generated output get one line saying to skip them, not a gist.
+On a large PR (more than ~15 files), read files by decision count, highest
+first, and say which files you didn't read in the approval line.
