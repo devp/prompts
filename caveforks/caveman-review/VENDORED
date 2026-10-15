@@ -1,0 +1,5 @@
+upstream: https://github.com/JuliusBrussee/caveman.git
+path: skills/caveman-review
+sha: 8909f6af8806897cbb8330c11028eee168ad7cc7
+committed: 2026-08-23T15:28:44+02:00
+vendored: 2026-10-15T14:23:02Z
