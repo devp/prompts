@@ -13,11 +13,11 @@ Write code review comments terse and actionable. One line per finding. Location,
 1. **Hunt.** Run the `code-review` skill at `high` on the same target (PR URL/number, branch, or diff). Don't pass `--comment` or `--fix`. Its findings are hypotheses, not output.
 2. **Verify.** Check each hypothesis yourself against the head-branch source: read the cited lines plus the callers/config that decide whether the path is reachable. Verdict per finding: keep, regrade, or drop. Drop pure refactor/DRY asks that name no defect. A claim resting on external behavior (API semantics, library internals) you can't see: keep it and name the source.
 3. **Grade.** `🔴` only for a verified failure path reachable under the code as shipped. Behind an empty/disabled config → `🟡` at most. Depends on author intent → `❓`.
-4. **Format** per the rules below. Last line: `hunted N · kept K · regraded R · dropped D`.
+4. **Format** per the rules below. Number kept findings only; refer to dropped ones by short description, never by hunt index. Last line: `hunted N · kept K · regraded R · dropped D`.
 
 ## Rules
 
-**Format:** `L<line>: <problem>. <fix>.` — or `<file>:L<line>: ...` when reviewing multi-file diffs.
+**Format:** `<n>. L<line>: <problem>. <fix>.` — or `<n>. <file>:L<line>: ...` when reviewing multi-file diffs. `<n>` runs 1..K over kept findings in output order, most severe first, so the user can say "fix 2, 4".
 
 **Severity prefix (optional, when mixed):**
 - `🔴 bug:` — broken behavior, will cause incident
