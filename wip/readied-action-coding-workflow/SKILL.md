@@ -38,26 +38,30 @@ cheap; a merge the developer didn't understand is expensive.
 restates it in one sentence and names what it thinks is unclear. No planning doc,
 no phase breakdown.
 
-**Step 1 — Propose a short menu.** Offer 2–3 next steps that are genuinely
+**Step 1 — Propose a short menu**, only at natural boundaries: tests green, increment
+merged, or an actual break. Never mid-flow. Offer 2–3 next steps that are genuinely
 independent, and for each state *why* — which files, modules, or interfaces it
 touches and why they don't collide. The independence claim must be falsifiable, so
 a bad decomposition is visible without reading the code.
 
 **Step 2 — Developer picks zero or one.** Picking zero is a first-class outcome: it
-means "staying on what I'm already doing." Unpicked steps become candidates for
-unattended work.
+means "staying on what I'm already doing." Silence means pick zero. Unpicked steps
+become candidates for unattended work.
 
-**Step 3 — Pair, with the developer driving.** Incremental TDD: one test, run,
-minimum code, run, one-line narration of what changed and why, next. No batch
-generation. Chunk size is whatever can be verified by running it.
+**Step 3 — Navigate; the developer drives.** Follow the `navigator` skill, mode
+`balanced` by default, `assist` when asked. Claude never edits files the developer
+is driving.
 
-**Step 3b — Spin off on demand.** At any point the developer can name a subtask for
-a subagent to take into a worktree. It parks when finished.
+**Step 3b — Spin off on demand.** At any point the developer can name a subtask;
+launch it with `sidetrack-fork`. It parks when finished.
 
 ## Unattended work
 
-Each unpicked step runs in its own worktree as self-contained TDD increments, with
-two branches:
+Delegate a step only if it is unpicked **and** either well-scoped or uninteresting.
+Interesting and foggy stays with the developer, picked or not.
+
+Each delegated step runs as a `sidetrack-fork`: its own worktree, self-contained TDD
+increments, two branches:
 
 - **review-ready** — the next coherent increment, complete, held for release.
 - **on-deck (speculative)** — continued work past that point while waiting.
@@ -68,9 +72,10 @@ two branches:
 Unattended work arrives pre-built, so it must never require holding the whole
 system in one's head to review:
 
-- Bounded blast radius: no schema changes, no cross-cutting refactors, no
-  dependency bumps, no changes to core abstractions or data models. Those are
-  always developer-driven, never parallelized.
+- Bounded blast radius: no schema or data-model changes unless the ticket
+  specifies the schema; no cross-cutting refactors, no dependency bumps, no
+  changes to core abstractions. Those are always developer-driven, never
+  parallelized.
 - Speculative work prefers additive, low-conflict territory — tests, adjacent
   modules, docs — and avoids files the developer is currently driving in.
 - **Everything collapses back to main within a day.** A worktree that can't reduce
@@ -92,7 +97,8 @@ system in one's head to review:
 Reviewed-not-built code opens a gap between mental model and real system.
 Mitigations, built in rather than remembered:
 
-- Core abstractions and data models stay hand-driven.
+- Core abstractions stay hand-driven; data models too, unless the ticket
+  specifies the schema.
 - Periodically — end of a chunk or a day — the developer states back what a
   subsystem now does, without looking. Failing that is a signal to go re-drive
   that area, not to have it explained again.
