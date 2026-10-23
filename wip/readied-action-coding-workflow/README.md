@@ -1,6 +1,6 @@
 # Readied Action Coding Workflow — trial notes
 
-Main working mode for work, on trial. Stays in `wip/` until trialed.
+Possible main working mode, on trial (for both work and personal). Stays in `wip/` until trialed.
 
 ## The bet being tested
 
