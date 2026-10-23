@@ -1,8 +1,6 @@
 # Readied Action Coding Workflow — trial notes
 
-Try this on a personal project before using it on real work. The workflow will
-*feel* good early if it matches how your attention works, which is exactly why
-feel is a bad measure of whether it's producing better code. Measure instead.
+Possible main working mode, on trial (for both work and personal). Stays in `wip/` until trialed.
 
 ## The bet being tested
 
@@ -14,14 +12,10 @@ If understanding *isn't* the constraint — if skimming generated diffs would
 have been fine — then the overhead bought nothing, and either hand-writing or
 plain batch review wins on both speed and defects.
 
-## Two numbers worth actually tracking
+## How to tell if it's working
 
-1. **Time-to-merge per increment**, against your normal pace. Overhead here is
-   many small costs rather than one big one; many small costs are easy to
-   under-notice and can total more than the review wall they replaced.
-2. **Where main-reaching defects come from** — branches you drove vs. branches
-   you approved. If approved-branch defects dominate, the comprehension bet is
-   not paying off, and the fix is *fewer parallel branches*, not better review.
+Gut feel day to day, plus `/how-am-i-doing` weekly: what shipped, what stalled,
+and where time went (driven / delegated / sidetrack), read from the real trail.
 
 ## Failure modes to watch for
 
