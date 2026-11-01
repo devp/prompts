@@ -52,10 +52,19 @@ Look at what the diff does, not what the description highlights:
 Ask: if this PR were wrong in a way a skim can't see, what happens? Weigh
 severity, detectability (loud vs. silent), reversibility.
 
-- **SKIM**: failures would be loud and revertable.
-- **CLOSE READ**: something could fail silently or irreversibly — migrations,
-  data writes, auth, API/contract changes, parity with existing query logic.
-  Name the files that put it here; those are the ones the user should read.
+- **SKIM** (default): failures would be loud, or quietly wrong but cheap to
+  revert. A feature flag, fail-open error paths, and no persisted writes all
+  count toward revertable.
+- **CLOSE READ**: a specific failure would be silent *and* not covered by
+  those mitigations, or irreversible on its own.
+
+Places to look for such a failure — not triggers by themselves: migrations,
+data writes, auth, API/contract changes, parity with existing query logic.
+
+To call CLOSE READ, name the concrete failure, say why flag/fail-open/revert
+doesn't cover it, and name the files; those are the ones the user should read.
+If the risk sits outside the diff (another repo, a warehouse view), that's a
+question for the author, not a reason to read more lines.
 
 This is a separate axis from the verdict. A PR can be OK with nothing found
 and still be CLOSE READ.
@@ -72,7 +81,7 @@ One turn, this shape:
 
 ```
 Verdict: <RUBBER STAMP | OK | HIGH-PRI> · Blast radius: <SKIM | CLOSE READ>
-<one line: why — for CLOSE READ, which files and what could fail silently>
+<one line: why — for CLOSE READ, the failure, why mitigations don't cover it, which files>
 
 Shape: <N files, Δ lines; surprises vs. ticket, or "as expected">
 Missing: <what's absent, or "none">
