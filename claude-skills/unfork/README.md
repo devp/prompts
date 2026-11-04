@@ -46,6 +46,12 @@ Skill tool. It ends by suggesting `/done` instead.
    they're folded. In a code repo, put amend files beside the doc only if the doc lives in a
    notes repo. Otherwise there's no pattern for them yet.
 
+5. **Background-session write guard.** Background (`bg`) sessions can't write to a repo's
+   main checkout until they call `EnterWorktree`, and the guard blocks Write/Edit even after
+   the user approves in chat. `unfork` writes into the main checkout, so every repo that holds
+   docs it amends needs `"worktree": {"bgIsolation": "none"}` in `.claude/settings.json`.
+   Set for work-notebook on 2026-11-04.
+
 ## Warnings
 
 - **Unfolded amends become a second source of truth.** Someone reading only `doc.md` misses
